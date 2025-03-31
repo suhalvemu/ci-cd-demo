@@ -1,0 +1,45 @@
+pipeline{
+      
+    agent any
+    stages {
+        stage('clone repository') {
+            steps {
+                echo 'cloning repository..'
+                git https://github.com/suhalvemu/ci-cd-demo.git
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'echo "Run tests here"'
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                echo 'Docker build..'
+                sh 'docker build -t cicd:latest .'
+            }
+        }
+        stage('Docker Run') {
+            steps {
+                echo 'Docker run..'
+                sh 'docker run -d -p 3000:3000 cicd:latest'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'This will always run'
+        }
+        success {
+            echo 'This will run only if the build is successful'
+        }
+        failure {
+            echo 'This will run only if the build fails'
+        }
+    }
+}
